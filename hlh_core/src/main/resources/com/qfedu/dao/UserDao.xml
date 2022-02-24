@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qfedu.dao.UserDao">
+
+
+    <resultMap id="UserMP" type="user">
+        <id property="userId" column="user_id"></id>
+        <result property="userHeadPortrait" column="user_headPortrait"></result>
+        <result property="userNickname" column="user_nickname" ></result>
+        <result property="userSex" column="user_sex"></result>
+        <result property="userCity" column="user_city"></result>
+        <result property="userIDcard" column="user_IDcard"></result>
+        <result property="userAdd" column="user_add"></result>
+        <result property="userPostcode" column="user_postcode"></result>
+        <result property="userQQ" column="user_QQ"></result>
+        <result property="userTel" column="user_tel"></result>
+        <result property="userPassword" column="user_password"></result>
+        <result property="userRealname" column="user_realname"></result>
+    </resultMap>
+    
+    <select id="selectUserById" parameterType="int" resultMap="UserMP">
+        select * from tb_user where user_id = #{userId}
+    </select>
+
+    <select id="login" parameterType="user" resultMap="UserMP">
+        select * from tb_user where user_tel = #{userTel} and user_password = #{userPassword}
+    </select>
+
+    <select id="checkLogin" resultMap="UserMP">
+        select * from tb_user where user_tel = #{userTel} and user_password = #{userPwd}
+    </select>
+
+</mapper>

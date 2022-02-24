@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>会员注册</title>
+<link href="${pageContext.request.contextPath}/css/wedding-3.css" rel="stylesheet"/>
+<link href="${pageContext.request.contextPath}/css/wedding-2.css" rel="stylesheet"/>
+</head>
+<script src="js/jquery-3.3.1.js"></script>
+ <script>
+     var messageData;
+     var wait = 120; // 短信验证码120秒后才可获取下一个
+
+     /**
+      * 获取验证码
+      * @param that
+      */
+     function getMsgNum(that) {
+         var phoneNumber = $('#phone').val();
+         setButtonStatus(that); // 设置按钮倒计时
+         var obj = {
+             phoneNumber: phoneNumber
+         };
+
+         $.ajax({
+             url: httpurl + '/sendMsg', // 后台短信发送接口
+             type: 'POST',
+             dataType: 'json',
+             contentType: "application/json",
+             async: false, //false 同步
+             data: JSON.stringify(obj),
+             xhrFields: {
+                 withCredentials: true
+             },
+             success: function (result) {
+                 if(result.code == '200') {
+                     messageData = result.data;
+                 }else {
+                     alert("错误码:" + data.code + "  错误信息:" + data.message);
+                 }
+             },
+             error: function (XMLHttpRequest, textStatus, errorThrown) {
+                 console.log(XMLHttpRequest.status);
+                 console.log(XMLHttpRequest.readyState);
+                 console.log(textStatus);
+             }
+         });
+     }
+     /**
+      * 设置按钮状态
+      */
+     function setButtonStatus(that) {
+         if (wait == 0) {
+             that.removeAttribute("disabled");
+             that.value="免费获取验证码";
+             wait = 60;
+         } else {
+             that.setAttribute("disabled", true);
+             that.value=wait+"秒后可以重新发送";
+             wait--;
+             setTimeout(function() {
+                 setButtonStatus(that)
+             }, 1000)
+         }
+     }
+
+     /**
+      * 注册按钮
+      */
+     function validateNum() {
+         var data = {
+             msgNum: inputMsgNum,
+             tamp: messageData.tamp,
+             hash: messageData.hash
+         };
+
+         $.ajax({
+             url:"user/register.do", // 验证接口
+             type: 'POST',
+             dataType: 'json',
+             contentType: "application/json",
+             data: JSON.stringify(data),
+             async: false, //false 同步
+             success: function (data) {
+                 //业务处理
+             },
+             error: function (XMLHttpRequest, textStatus, errorThrown) {
+                 console.log(XMLHttpRequest.status);
+                 console.log(XMLHttpRequest.readyState);
+                 console.log(textStatus);
+             }
+         });
+     }
+
+ </script>
+	<div id="public-toolbar" class="hidden_active user_adjust_public">
+    	<div class="layout_center layout_clear">
+        	<div class="page-logo layout_fl">
+            	<a><img src="${pageContext.request.contextPath}/img/rxT54692503vu.jpg"></a>
+            </div>
+            <div class="page-tels layout_fr">
+            	<span class="tel-show"> 全国免费咨询热线 </span>
+                <span class="tel-pink"><strong>023-6766-4541</strong></span>
+            </div>
+        </div>
+    </div>
+    <div class="user-form" style="background:url(${pageContext.request.contextPath}/img/JQK51845110Xc.jpg)">
+    	<div class="layout_center">
+        	<div class="user-form-wrap">
+            	<div class="user-form-wraps">
+                	<div class="user-form-item"><strong class="user-form-title">会员注册</strong></div>
+                    <form>
+                    	<div class="user-form-item">
+                        	<input class="user-input" type="text" max="15" maxlength="15" id="phone" placeholder="手机号">
+                        </div>
+                        <div class="user-form-item">
+                        	<input class="user-input" type="password" max="15" maxlength="15" id="pwd" placeholder="密码">
+                        </div>
+                        <div class="user-form-item">
+                        	<input class="user-input user-input-adjust" type="text" max="4" id="code" placeholder="短信验证码"><a class="qrcode">发送验证码</a>
+                        </div>
+                        <div class="user-form-item">
+                        	<label>
+                            	<input class="user-check" type="checkbox" checked="false" value="yes">
+                                <span class="cos_span">
+                                	登录即表示同意<a class="keyword-blue-pale">《119婚庆网用户协议》</a>
+                                </span>
+                            </label>
+                        </div>
+                    </form>
+                    <div class="user-form-item">
+
+                        <button type="button" class="btn btn-block btn-flat" style="font-weight: bold;" onclick="validateNum()">立即注册</button>
+                    </div>
+                    <div class="user-form-item us_text_right">
+                    	<span class="cos_span"><a>已有账户?立即登录</a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+	<div class="page-footer">
+    	<div class="layout_center">
+        	<div class="footer-list">
+            	<dl class="footer-item">
+                	<h3>新手上路</h3>
+                    <a  >
+                    	<dd><b></b>如何注册</dd>
+                    </a>
+                    <a  >
+                    	<dd><b></b>如何登录</dd>
+                    </a>
+                    <a  >
+                    	<dd><b></b>如何预订</dd>
+                    </a>
+                    <a  >
+                    	<dd><b></b>购物流程</dd>
+                    </a>
+                    <a  >
+                    	<dd><b></b>预订须知</dd>
+                    </a>
+                </dl>
+                <dl class="footer-item">
+                	<h3>公司信息</h3>
+                    <a  >
+                    	<dd><b></b>关于我们</dd>
+                    </a>
+                    <a  >
+                    	<dd><b></b>用户协议</dd>
+                    </a>
+                    <a  >
+                    	<dd><b></b>隐私申明</dd>
+                    </a>
+                    <a  >
+                    	<dd><b></b>商家入驻协议</dd>
+                    </a>
+                    <a  >
+                    	<dd><b></b>安全须知</dd>
+                    </a>
+                </dl>
+                <dl class="footer-item">
+                	<h3>合作联系</h3>
+                    <a  >
+                    	<dd><b></b>联系我们</dd>
+                    </a>
+                    <a  >
+                    	<dd><b></b>招商加盟</dd>
+                    </a>
+                    <a  >
+                    	<dd><b></b>商户平台</dd>
+                    </a>
+                    <a  >
+                    	<dd><b></b>招聘信息</dd>
+                    </a>
+                </dl>
+                <dl class="footer-item">
+                	<h3>帮助中心</h3>
+                    <a  >
+                    	<dd><b></b>忘记密码</dd>
+                    </a>
+                    <a  >
+                    	<dd><b></b>常见问题</dd>
+                    </a>
+                    <a  >
+                    	<dd><b></b>在线客服</dd>
+                    </a>
+                    <a  >
+                    	<dd><b></b>如何上传产品</dd>
+                    </a>
+                    <a  >
+                    	<dd><b></b>如何成为商家</dd>
+                    </a>
+                </dl>
+                <div class="footer-mobile">
+                	<img src="${pageContext.request.contextPath}/img/SVT58398773Nz.jpg">
+                    <h2>官方微信</h2>
+                </div>
+            </div>
+            <div class="footer-data0">
+            	<a><i class="footer-ad0" title="可信网站身份验证"></i></a>
+                <a><i class="footer-ad1" title="重庆网警备案"></i></a>
+                <a><i class="footer-ad2" title="重庆工商行政管理"></i></a>
+                <a><i class="footer-ad3" title="安全联盟认证"></i></a>
+            </div>
+            <div class="footer-data1">
+            	友情链接：
+            	<a href="https://www.baidu.com/" target="_blank">百度</a>
+                <em>|</em>
+                <a href="https://www.taobao.com/">淘宝</a>
+            </div>
+            <div class="footer-data2">
+            	 CopyRight 2016 婚礼汇 All Rights Reserved 
+                 <a href="Untitled-2.html">渝ICP备14001673号</a>
+            </div>
+        </div>
+    </div>
+    <a target="_blank" title="联系我们" href="Untitled-2.html">
+    	<span id="askus">&nbsp;</span>
+    </a>
+    <div id="gotop" title="返回顶部" style="display:block; background:url(${pageContext.request.contextPath}/img/gotop.png) -70px 0px no-repeat"></div>
+<body>
+</body>
+</html>

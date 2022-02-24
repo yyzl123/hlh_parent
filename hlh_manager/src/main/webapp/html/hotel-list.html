@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+        <link rel="stylesheet" href="layui/css/layui.css" />
+    </head>
+    <body>
+        <table id="hotelTable" lay-filter="aaa"></table>
+        <!--定义图片显示的模版-->
+        <script type="text/html" id="imgTpl">
+           <img src="{{d.img.imgAdd}}" style="height: 25px"/>
+        </script>
+
+        <!--定义推荐指数的模版-->
+        <script type="text/html" id="starTpl">
+            {{#  if(d.hotelStar =="width:100%"){ }}
+                ★★★★★
+            {{#  } else if(d.hotelStar =="width:80%"){ }}
+                ★★★★☆
+            {{#  }else if(d.hotelStar =="width:60%"){ }}
+                ★★★☆☆
+            {{#  }else if(d.hotelStar =="width:40%"){ }}
+                ★★☆☆☆
+            {{#  }else if(d.hotelStar =="width:20%"){ }}
+                ★☆☆☆☆
+            {{#  }else{ }}
+                ☆☆☆☆☆
+            {{#  } }}
+        </script>
+
+        <script type="text/html" id="operBar">
+            <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">编辑</a>
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+        </script>
+
+        <script type="text/javascript" src="layui/layui.js" ></script>
+        <script type="text/javascript" src="js/jquery-3.4.1.min.js" ></script>
+        <script>
+            layui.use('table',function(){
+               var table = layui.table;
+
+               table.render({
+                   elem:"#hotelTable"
+                   ,url:"hotelList.do"   //{page:1,limit:3}
+                   ,cols:[[
+                       {field: 'hotelId', title: '编号', width:80}
+                       ,{field: 'hotelName', title: '酒店名称', width:180}
+                       ,{field: 'hotelAddress', title: '酒店地址', width:280}
+                       ,{field:'hotelTel' ,title:"联系电话"}
+                       ,{field:'hotelStar',title:"推荐指数",templet:"#starTpl"}
+                       ,{field:'img',title:"图片",templet:"#imgTpl"}
+                       ,{fixed:'right', title:"操作",toolbar:"#operBar"}
+                   ]]
+                   ,page:true
+                   ,limit:3
+                   ,limits:[1,2,3,4,5]
+               });
+
+                //table.on表示侦听数据表格的事件
+                //      tool表示行事件
+                //      toolbar表示表格事件
+               table.on("tool(aaa)",function(obj){
+                   console.log("~~~~~~~~~~~~~~~"+obj.event);
+                   if(obj.event == "del"){
+                        var hotelId = obj.data.hotelId;
+                        layer.confirm('你确定要删除这个酒店信息吗？',function(index){
+                            //ajax将hotelId传递到后端，进行删除
+
+                            //从数据表格中将这条数据（点击删除按钮对应的数据）删除
+                            obj.del();
+                            layer.msg("删除成功！");
+                        });
+                   }else if(obj.event == "edit"){
+                       var hotel = obj.data;
+                       //弹出弹窗，显示酒店信息
+                       //type用来指定弹窗的类型:layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）。
+                       //    若你采用layer.open({type: 1})方式调用，则type为必填项（信息框除外）
+                       //content用来指定弹窗的显示内容
+                       //area指定弹窗尺寸
+                       //cancel点击右上角X回调方法
+                       //btn用来指定弹窗上的按钮
+                        $("#hotelId").val(hotel.hotelId);
+                        $("#hotelName").val(hotel.hotelName);
+                        $("#hotelAddress").val(hotel.hotelAddress);
+                        $("#hotelImg").attr("src",hotel.img.imgAdd);
+                       layer.open({
+                           type:1
+                           ,content:$("#updateDiv")
+                           ,area:['400px','500px']
+                           ,cancel:function(){
+
+                           }
+                           ,btn:['提交','取消']
+                           ,btn1:function(index,layero){
+                               console.log("--------1")
+                               //获取修改后的数据，通过ajax提交到控制器进行修改
+                                $.post("hotelUpdate.do",{"hotelId":$("#hotelId").val(),"hotelName":$("#hotelName").val()},function(res){
+                                    console.log(res);
+                                    if(res.code == 0){
+                                        layer.close(index);
+                                    }
+                                },"JSON");
+
+                               return false; //阻止弹窗关闭
+                           }
+                           ,btn2:function(){
+                               console.log("--------2")
+                           }
+                       });
+                   }
+               });
+            });
+        </script>
+
+        <div id="updateDiv" style="padding: 15px; display: none">
+            <p>
+                编号：<input type="text" id="hotelId" disabled/>
+            </p>
+            <p>
+                名称：<input type="text" id="hotelName"/>
+            </p>
+            <p>
+                地址：<input type="text" id="hotelAddress"/>
+            </p>
+            <p>
+                图片：<img src="" id="hotelImg" style="height: 50px"/>
+            </p>
+        </div>
+    </body>
+</html>

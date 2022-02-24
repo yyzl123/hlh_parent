@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h3>新增酒店信息</h3>
+    <form id="form1">
+      <p>酒店名称：<input type="text" id="hotelName" name="hotelName"/></p>
+      <p>酒店地址：<input type="text" id="hotelAddress" name="hotelAddress"/></p>
+      <p>酒店电话：<input type="text" id="hotelTel" name="hotelTel"/></p>
+      <p>推荐指数：<input type="text" id="hotelStar" name="hotelStar"/></p>
+      <p><img src="" style="height: 50px" id="hotelImg"/></p>
+      <p>酒店图片：<input type="file" id="img" name="img" onchange="uploadFile()"/></p>
+        <p><input type="button" value="提交" onclick="submitInfo()"/></p>
+        <input type="hidden" id="imgId"/>
+    </form>
+
+    <script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
+    <script>
+        function uploadFile(){
+            var formTag = document.getElementById("form1");
+            var formData = new FormData(formTag);
+            $.ajax({
+                type:"POST",
+                url:"fileUpload.do",
+                data:formData,
+                processData:false,
+                contentType:false,
+                success:function(res){
+                    console.log(res);
+                    $("#hotelImg").attr("src",res.imgAdd);
+                    $("#imgId").val(res.imgId);
+                }
+            });
+        }
+
+        function submitInfo(){
+            var hotelName = $("#hotelName").val();
+            var hotelAddress = $("#hotelAddress").val();
+            var hotelTel = $("#hotelTel").val();
+            var hotelStar = $("#hotelStar").val();
+            var imgId = $("#imgId").val();
+
+            $.post("hotelInsert.do",{"hotelName":hotelName,"hotelAddress":hotelAddress,"hotelTel":hotelTel,"hotelStar":hotelStar,"img.imgId":imgId},function(res){
+                console.log(res);
+            },"JSON");
+        }
+
+    </script>
+
+
+</body>
+</html>

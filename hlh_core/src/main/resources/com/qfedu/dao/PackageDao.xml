@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qfedu.dao.PackageDao">
+
+    <resultMap id="MyPackageMP" type="myPackage">
+        <id property="packageId" column="package_id"></id>
+        <result property="packageName" column="package_name"></result>
+        <result property="packagePrice" column="package_price"></result>
+        <result property="packageContent" column="package_content"></result>
+        <result property="packageSales" column="package_sales"></result>
+        <result property="packageMenuA" column="package_menuA"></result>
+        <result property="packageMenuB" column="package_menuB"></result>
+        <association property="img"
+                     javaType="img"
+                     column="package_id"
+                     select="com.qfedu.dao.ImgDao.selectImgByPackageId"
+                     fetchType="eager"></association>
+    </resultMap>
+    
+
+    <select id="selectPackageListByHotelId" parameterType="Integer" resultMap="MyPackageMP">
+        select * from tb_package where tb_hotel_hotel_id = #{hotelId}
+    </select>
+
+    <select id="selectPackageById" parameterType="Integer" resultMap="MyPackageMP">
+        select * from tb_package where package_id = #{packageId}
+    </select>
+
+</mapper>

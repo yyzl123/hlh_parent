@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+    </head>
+    <body>
+        <table>
+            <tr>
+                <th>酒店编号</th>
+                <th>酒店名称</th>
+                <th>酒店地址</th>
+            </tr>
+            <tbody id="hotelData">
+            </tbody>
+        </table>
+
+        <script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
+        <script type="text/javascript" >
+            //1.发送请求
+            // {"page":1,"limit":3}
+            //"{page:1,limit:3}"
+            $.post("hotelList.do",{"page":1,"limit":3,"conditions":""},function(res){
+                console.log(res);
+                var hotels = res.data
+                for(var i=0; i<hotels.length; i++){
+                    var hotel = hotels[i];
+                    var trTag = document.createElement("tr");    //  <tr></tr>
+                    var td1 = document.createElement("td");      //   <td></td>
+                    td1.innerHTML = hotel.hotelId;
+                    var td2 = document.createElement("td");      //   <td></td>
+                    td2.innerHTML = hotel.hotelName;
+                    var td3 = document.createElement("td");      //   <td></td>
+                    td3.innerHTML = hotel.hotelAddress;
+
+                    trTag.appendChild(td1);
+                    trTag.appendChild(td2);
+                    trTag.appendChild(td3);
+
+                    document.getElementById("hotelData").appendChild(trTag);
+                }
+
+                //根据count完成分页效果的显示
+            },"json");
+        </script>
+    </body>
+</html>

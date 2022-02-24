@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qfedu.dao.HotelDao">
+
+    
+    <resultMap id="HotelMP" type="hotel">
+        <id property="hotelId" column="hotel_id"></id>
+        <result property="hotelName" column="hotel_name"></result>
+        <result property="hotelAddress" column="hotel_address"></result>
+        <result property="hotelTel" column="hotel_tel"></result>
+        <result property="hotelStar" column="hotel_star"></result>
+        <association property="img"
+                     javaType="img"
+                     column="hotel_id"
+                     select="com.qfedu.dao.ImgDao.selectImgByHotelId"
+                     fetchType="eager"></association>
+    </resultMap>
+    
+    <select id="selectHotelList" resultMap="HotelMP">
+        select * from tb_hotel
+    </select>
+
+    <select id="selectHotelById" parameterType="Integer" resultMap="HotelMP">
+        select * from tb_hotel where hotel_id = #{hotelId}
+    </select>
+
+    <select id="listHotels" resultMap="HotelMP" resultSets="java.util.List">
+        select * from tb_hotel limit #{start},#{limit}
+    </select>
+
+    <select id="getHotelsCount" resultType="int">
+        select count(1) from tb_hotel
+    </select>
+
+    <insert id="insertHotel" parameterType="Hotel" useGeneratedKeys="true" keyProperty="hotelId">
+        insert into tb_hotel(
+            hotel_name,
+            hotel_address,
+            hotel_tel,
+            hotel_star
+        ) values(
+            #{hotelName},
+            #{hotelAddress},
+            #{hotelTel},
+            #{hotelStar}
+        )
+    </insert>
+</mapper>
