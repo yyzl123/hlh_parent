@@ -4,6 +4,9 @@ import com.qfedu.bean.Cart;
 
 import java.util.List;
 
+/**
+ * 购物车类
+ */
 public interface CartDao {
 
     void addCart(Cart cart) throws Exception;
